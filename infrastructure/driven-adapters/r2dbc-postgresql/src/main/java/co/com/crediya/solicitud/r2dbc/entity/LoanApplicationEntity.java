@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Table(name = "loan_applications", schema = "loan_application")
@@ -20,16 +21,13 @@ public class LoanApplicationEntity {
     private UUID id;
 
     @Column("amount")
-    private String amount;
+    private BigDecimal amount;
 
     @Column("term")
     private Integer term;
 
     @Column("email")
     private String email;
-
-    @Column("status")
-    private String status;
 
     @Column("state_id")
     private UUID stateId;

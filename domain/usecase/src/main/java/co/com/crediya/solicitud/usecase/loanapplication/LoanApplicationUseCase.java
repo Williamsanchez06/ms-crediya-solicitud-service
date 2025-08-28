@@ -18,8 +18,9 @@ public class LoanApplicationUseCase {
 
     public Mono<LoanApplication> saveLoanApplication(LoanApplication loanProcess) {
         return loanTypeRepository.findById(loanProcess.getLoanType().getId())
-                .switchIfEmpty(Mono.error(new BusinessException("No existe el tipo de credito seleccionado")))
+                .switchIfEmpty(Mono.error(new BusinessException("No existe el tipo de crédito seleccionado")))
                 .flatMap(loanType -> {
+                    loanProcess.setLoanType(loanType);
                     String initialState = String.valueOf(loanType.getAutoValidate() ? StateName.APROBADO : StateName.PENDIENTE);
                     return stateRepository.findByName(initialState)
                             .switchIfEmpty(Mono.error(new BusinessException("No existe el estado: " + initialState)))
@@ -27,7 +28,6 @@ public class LoanApplicationUseCase {
                                 loanProcess.setState(state);
                                 return loanApplicationRepository.save(loanProcess);
                             });
-
                 });
     }
 

@@ -33,6 +33,6 @@ public class LoanTypeEntity {
     private BigDecimal interestRate;
 
     @Column("auto_validation")
-    private Boolean autoValidation;
+    private Boolean autoValidate;
 
 }
