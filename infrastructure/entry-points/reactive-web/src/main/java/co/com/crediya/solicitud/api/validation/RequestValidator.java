@@ -7,9 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -17,24 +15,33 @@ public class RequestValidator {
 
     private final Validator validator;
 
-    public <T> Map<String, String> validate(T dto) {
+    public <T> String validate(T dto) {
         Set<ConstraintViolation<T>> violations = validator.validate(dto);
-        Map<String, String> errors = new HashMap<>();
+        Map<String, List<String>> groupedErrors = new LinkedHashMap<>();
 
         for (ConstraintViolation<T> violation : violations) {
             String fieldName = violation.getPropertyPath().toString();
             String jsonName = resolveJsonPropertyName(dto.getClass(), fieldName);
-            errors.put(jsonName, violation.getMessage());
+            groupedErrors
+                    .computeIfAbsent(jsonName, k -> new ArrayList<>())
+                    .add(violation.getMessage());
         }
 
-        return errors;
+        // Concatenar los mensajes como un solo string: campo=mensaje1, campo2=mensaje2
+        List<String> errorMessages = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : groupedErrors.entrySet()) {
+            String combined = entry.getKey() + "=" + String.join("; ", entry.getValue());
+            errorMessages.add(combined);
+        }
+
+        return String.join(", ", errorMessages);
     }
 
     private String resolveJsonPropertyName(Class<?> clazz, String fieldName) {
         try {
             Field field = clazz.getDeclaredField(fieldName);
             JsonProperty annotation = field.getAnnotation(JsonProperty.class);
-            if (annotation != null) {
+            if (annotation != null && !annotation.value().isEmpty()) {
                 return annotation.value();
             }
         } catch (NoSuchFieldException ignored) {

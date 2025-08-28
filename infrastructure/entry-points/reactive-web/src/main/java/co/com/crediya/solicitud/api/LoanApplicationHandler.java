@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class LoanApplicationHandler {
 
+
     private final RequestValidator requestValidator;
     private final LoanApplicationUseCase loanApplicationUseCase;
 
@@ -26,13 +27,13 @@ public class LoanApplicationHandler {
                     var errors = requestValidator.validate(dto);
                     return errors.isEmpty()
                             ? Mono.just(dto)
-                            : Mono.error(new ValidationException(errors.toString()));
+                            : Mono.error(new ValidationException(errors));
                 })
                 .map(LoanApplicationMapper::toDomain)
                 .flatMap(loanApplicationUseCase::saveLoanApplication)
                 .map(LoanApplicationMapper::toResponseDTO)
                 .flatMap(resp -> ServerResponse
-                        .created(request.uri()) // o Location "/loan-applications/{id}"
+                        .created(request.uri())
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(resp));
     }

@@ -12,6 +12,5 @@ public record LoanApplicationCreateResponseDTO(
         UUID loanTypeId,
         BigDecimal amount,
         Integer term,
-        String email,
-        String applicantId
+        String email
 ) {}
