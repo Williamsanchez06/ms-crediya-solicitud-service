@@ -16,7 +16,6 @@ public class LoanApplication {
     UUID id;
     BigDecimal amount;
     Integer term;
-    String status;
     String email;
     State state;
     LoanType loanType;
