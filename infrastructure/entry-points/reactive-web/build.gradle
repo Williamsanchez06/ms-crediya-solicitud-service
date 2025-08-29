@@ -5,4 +5,5 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.hibernate.validator:hibernate-validator:7.0.5.Final'
     implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.2.0'
 }
