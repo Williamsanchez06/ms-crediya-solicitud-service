@@ -1,18 +1,15 @@
 package co.com.crediya.solicitud.api.exception;
 
-import co.com.crediya.solicitud.api.dto.ErrorResponse;
 import co.com.crediya.solicitud.model.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.ServerWebInputException;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
@@ -55,21 +52,11 @@ public class GlobalExceptionHandler implements WebExceptionHandler {
             }
         }
 
-        return buildResponse(exchange, status, code, message);
-    }
-
-    private Mono<Void> buildResponse(ServerWebExchange exchange, HttpStatus status, String code, String message) {
-
-        ErrorResponse error = new ErrorResponse(code, message);
-
-        byte[] bytes = ("{\"code\":\"" + error.code() + "\",\"message\":\"" + error.message() + "\"}")
-                .getBytes(StandardCharsets.UTF_8);
-
-        exchange.getResponse().setStatusCode(status);
-        exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-
-        return exchange.getResponse()
-                .writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(bytes)));
-
+        return GlobalErrorResponseBuilder
+                .with(exchange)
+                .status(status)
+                .code(code)
+                .message(message)
+                .build();
     }
 }
