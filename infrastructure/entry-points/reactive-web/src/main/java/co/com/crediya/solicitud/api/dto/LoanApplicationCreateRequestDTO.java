@@ -1,5 +1,6 @@
 package co.com.crediya.solicitud.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,8 +10,23 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public record LoanApplicationCreateRequestDTO(
-        @NotNull @Positive BigDecimal amount,
-        @NotNull @Positive Integer term,
-        @NotBlank @Email String email,
-        @NotNull UUID loanTypeId
-) {}
+        @NotNull
+        @Positive
+        @JsonProperty("amount")
+        BigDecimal amount,
+
+        @NotNull
+        @Positive
+        @JsonProperty("term")
+        Integer term,
+
+        @NotBlank
+        @Email
+        @JsonProperty("email")
+        String email,
+
+        @NotNull
+        @JsonProperty("loan_type_id")
+        UUID loanTypeId
+) {
+}
